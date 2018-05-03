@@ -19,8 +19,6 @@ def get_comment_threads(youtube=None, video_id=None, max_results=20):
   #   text = comment["snippet"]["textDisplay"]
   #   print("Comment by %s: %s" % (author, text))
 
-  print(len(results['items']))
-
   return results['items']
 
 
