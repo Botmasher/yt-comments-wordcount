@@ -24,7 +24,12 @@ def download_captions(youtube, track_id):
     id=track_id
   ).execute()
 
-  return track_id
+  return data
+
+def write_file(data):
+    with open("captions.txt", "w") as file:
+        file.write(data)
+    return
 
 if __name__ == "__main__":
   yt = yt_authorize()
@@ -33,7 +38,8 @@ if __name__ == "__main__":
 
   try:
     caps_id = get_captions(api, video_id)
-    download_captions(api, caps_id)
+    caps = download_captions(api, caps_id).decode("utf-8")
+    write_file(caps)
 
   except HttpError as e:
     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))

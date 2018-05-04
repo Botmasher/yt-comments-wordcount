@@ -80,17 +80,21 @@ def build_ignored_words_list():
         'much', 'etc', 'even', 'just', 'when', 'how', 'used', 'use', 'm', 'any', 'only',\
         'was', 'up', 'he', 'she', 'him', 'her', 'his', 'hers', 'our', 'ours', 'into', \
         'more', 'both', 'while', 'then', 'like', 'did', 'until', 'should', 'around', \
-        'being', 'been', 'still']
+        'being', 'been', 'still', 'me']
     return ignored_words
 
 ignored_words = build_ignored_words_list()
 
 if __name__ == "__main__":
-    comments = get_comments_text(max_results=100)
+    max_results = 100
+    video_comments = get_comments_text(max_results=max_results)
+    title = video_comments['title']
+    comments = video_comments['comments']
     ## Demo comments (avoid API quota expense while testing)
     #comments = ["first", "All the rest of these are like fake comments pretending to talk like someone ur not m8", "horses!", "horses is me. and you are not the one that is a me!!!:D", ":)", "Furrrrsst. For reals.", "horses and much Love for u", "happy with yay", "the best!", "oh wow this is sooo not for me", "Whatever. Kinda not what I thought it'd be.", "k my friend", "ur so wrong used to say rekt now it's like wut", "nice video.", "Still got it! But hey can you do one on horses?", "nope"]
     words_counter = TokenCounter()
     #words_counter.compare_tfidfs(comments)
     #words_counter.print_sorted_by_tfidf(descending=True)
     words_counter.compare_frequencies(comments)
+    print("\n{0}\npopular nontrivial words across {1} comments:\n".format(title, max_results))
     words_counter.print_sorted(descending=True, use_tfidf=False, ignored_words=ignored_words, min_val=3)
