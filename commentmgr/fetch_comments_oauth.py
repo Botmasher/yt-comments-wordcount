@@ -27,8 +27,8 @@ def get_comments(youtube=None, parent_id=None):
 
 	return results['items']
 
-def get_video_author_title(youtube=None, video_id=None):
-	"""Fetch a single video's title"""
+def get_video(youtube=None, video_id=None):
+	"""Fetch details for a single video"""
 	if not youtube or not video_id: return
 
 	results = youtube.videos().list(
@@ -36,7 +36,18 @@ def get_video_author_title(youtube=None, video_id=None):
 		id=video_id
 	).execute()
 
-	return (results['items'][0]['snippet']['channel'], results['items'][0]['snippet']['title'])
+	return results['items'][0]['snippet']
+
+def get_channel(youtube=None, channel_id=None):
+	"""Fetch details of a single channel"""
+	if not youtube or not channel_id: return
+
+	results = youtube.channels().list(
+		part="snippet",
+		id=channel_id
+	).execute()
+
+	return results['items'][0]['snippet']
 
 # Call externally through command line and pass a --videoid
 def get_comments_text(max_results):
@@ -46,11 +57,14 @@ def get_comments_text(max_results):
 	try:
 		video_comment_threads = get_comment_threads(youtube=api, video_id=video_id, max_results=max_results)
 		#parent_id = video_comment_threads[0]["id"]
-		video_title = get_video_author_title(youtube=api, video_id=video_id)
+		video = get_video(youtube=api, video_id=video_id)
+		video_title = video['title']
+		channel = get_channel(youtube=api, channel_id=video['channelId'])
+		channel_title = channel['title']
 		comments_text = []
 		for c in video_comment_threads:
 			comments_text.append(c['snippet']['topLevelComment']['snippet']['textDisplay'])
-		return {'title': video_title[1], 'comments': comments_text}
+		return {'title': video_title, 'channel': channel_title, 'comments': comments_text}
 
 	except HttpError as e:
 		print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
