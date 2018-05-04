@@ -10,11 +10,13 @@ class TokenCounter:
         self.tf_idfs = {}
 
     def split_text(self, raw):
+        """Divide a string of raw text into an array of words"""
         text = raw.lower()
         words = re.compile(r'\W+', re.UNICODE).split(text)
         return words
 
     def term_frequency(self, words):
+        """Calculate the frequency of each word in a list smoothed by count of words in the list"""
         tfs = {}
         # get the raw count of words in a text
         for word in words:
@@ -25,6 +27,7 @@ class TokenCounter:
         return
 
     def print_sorted(self, descending=False, use_tfidf=False, ignored_words=[], min_val=0):
+        """Sort, format and print the stored frequency calculations per word"""
         word_counts_map = self.texts_per_word.items() if not use_tfidf else self.tf_idfs.items()
         sorted_pairs = sorted(word_counts_map, key=operator.itemgetter(1), reverse=descending)
         for word_count in sorted_pairs:
@@ -50,6 +53,7 @@ class TokenCounter:
         return
 
     def compare_tfidfs(self, texts):
+        """Calculate average tf-idf weights for words across a list of texts"""
         dfs = self.document_frequency(texts)
         tfs = {}
 
@@ -81,26 +85,10 @@ def build_ignored_words_list():
 
 ignored_words = build_ignored_words_list()
 
-# mockup for thinking through tfidf calc
-# iroquois: 0, the: 3; (total): 10
-# iroquois: 1, the: 2; (total): 21
-# iroquois: 0, the: 1; (total): 2
-# iroquois: 1, the: 1; (total): 7
-#
-# tfs
-# iroquois: 0/10, the: 3/10
-# iroquois: 1/21, the: 2/21
-# iroquois: 0/2, the: 1/2
-# iroquois: 1/7, the: 1/7
-#
-# idfs
-# iroquois: log(4/2), the: log(4/4)
-#
-
 if __name__ == "__main__":
     comments = get_comments_text(max_results=100)
     ## Demo comments (avoid API quota expense while testing)
-    #comments = ["All the rest of these are like fake comments pretending to talk like someone ur not m8", "horses!", "horses is me. and you are not the one that is a me!!!:D", ":)", "horses and much Love for u", "happy with yay", "the best!", "oh wow this is sooo not for me", "Whatever. Kinda not what I thought it'd be.", "k my friend", "ur so wrong used to say rekt now it's like wut", "nice video.", "Still got it! But hey can you do one on horses?", "nope"]
+    #comments = ["first", "All the rest of these are like fake comments pretending to talk like someone ur not m8", "horses!", "horses is me. and you are not the one that is a me!!!:D", ":)", "Furrrrsst. For reals.", "horses and much Love for u", "happy with yay", "the best!", "oh wow this is sooo not for me", "Whatever. Kinda not what I thought it'd be.", "k my friend", "ur so wrong used to say rekt now it's like wut", "nice video.", "Still got it! But hey can you do one on horses?", "nope"]
     words_counter = TokenCounter()
     #words_counter.compare_tfidfs(comments)
     #words_counter.print_sorted_by_tfidf(descending=True)
