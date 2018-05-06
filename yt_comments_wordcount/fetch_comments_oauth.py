@@ -53,7 +53,7 @@ def get_channel(youtube=None, channel_id=None):
 def get_comments_text(max_results):
 	yt = yt_authorize()
 	api = yt['api']
-	video_id = yt['args'].videoid
+	video_id = yt['args'].videoid if yt['args'].videoid else yt['args'].v
 	try:
 		video_comment_threads = get_comment_threads(youtube=api, video_id=video_id, max_results=max_results)
 		#parent_id = video_comment_threads[0]["id"]

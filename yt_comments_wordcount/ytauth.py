@@ -70,13 +70,14 @@ def yt_authorize():
   # The "videoid" option specifies the YouTube video ID that uniquely
   # identifies the video for which the comment will be inserted.
   argparser.add_argument("--videoid",
-    help="Required; ID for video for which the comment will be inserted.")
+    help="Required; ID for video (v queryparam in the URI).")
   # The "text" option specifies the text that will be used as comment.
   argparser.add_argument("--text", help="Text that will be used as comment.")
+  argparser.add_argument("--v", help="Required; ID for video (v query param in the URI).")
   args = argparser.parse_args()
 
-  if not args.videoid:
-    exit("Please specify videoid using the --videoid= parameter.")
+  if not args.videoid and not args.v:
+    exit("Please specify one video ID using parameter --videoid= or --v=.")
   # if not args.text:
   #   exit("Please specify text using the --text= parameter.")
 

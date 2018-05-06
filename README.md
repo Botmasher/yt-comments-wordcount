@@ -15,4 +15,4 @@ You can run this code locally without much hassle. You will need to get your own
   - pass in a `--videoid` to be read by the API fetch script: `python3 count_words.py --videoid=jNQXAC9IVRw`
 
 ## Adjusting Settings
-By default the project will ask the YouTube API for 100 top-level comments. You can adjust this by changing `max_results` in main at the bottom of `count_words.py`. You can also add to or change the list of words to ignore if you're going for straight frequencies, or call the `TokenCounter` instance's `compare_tfidfs` for a smoothed result that takes into account the commonness of a word.
+By default the project will ask the YouTube API for 100 top-level comments. You can adjust this by changing `max_results` in main at the bottom of `count_words.py`. You can also add to or change the list of words to ignore if you're going for straight frequencies, or call the `TokenCounter` instance's `compare_tfidfs` method for a smoothed result that takes into account the commonness of a word.
