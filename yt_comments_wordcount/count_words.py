@@ -29,5 +29,5 @@ def count_comment_words():
     #words_counter.compare_tfidfs(comments)
     #words_counter.print_sorted_by_tfidf(descending=True)
     words_counter.compare_frequencies(comments)
-    print("\nvideo: {0}\nchannel: {1}\n-- popular* words across {2} comments --".format(title, channel, max_results))
+    print("\nvideo: {0}\nchannel: {1}\n-- popular words across {2} comments --".format(title, channel, max_results))
     words_counter.print_sorted(descending=True, use_tfidf=False, ignored_words=ignored_words, min_val=3)
