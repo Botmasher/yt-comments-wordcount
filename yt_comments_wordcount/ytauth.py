@@ -67,13 +67,13 @@ def get_authenticated_service(args):
     doc = f.read()
     return build_from_document(doc, http=credentials.authorize(httplib2.Http()))
 
-def yt_authorize():
+def yt_authorize_one_video():
   # The "videoid" option specifies the YouTube video ID that uniquely
-  # identifies the video for which the comment will be inserted.
+  # identifies the video.
   argparser.add_argument("--videoid",
     help="Required; ID for video (v queryparam in the URI).")
   # The "text" option specifies the text that will be used as comment.
-  argparser.add_argument("--text", help="Text that will be used as comment.")
+  #argparser.add_argument("--text", help="Text that will be used as comment.")
   argparser.add_argument("--v", help="Required; ID for video (v query param in the URI).")
   args = argparser.parse_args()
 
@@ -82,6 +82,20 @@ def yt_authorize():
   # if not args.text:
   #   exit("Please specify text using the --text= parameter.")
 
+  youtube = get_authenticated_service(args)
+
+  return {'args': args, 'api': youtube}
+
+def yt_authorize_one_channel():
+  # The "channelid" option specifies the unique YouTube channel ID
+  argparser.add_argument("--channelid",
+    help="Required; unique ID for one channel.")
+  argparser.add_argument("--c", help="Required; unique ID for one channel.")
+  args = argparser.parse_args()
+
+  if not args.channelid and not args.c:
+    exit("Please specify one channel ID using parameter --channelid= or --c=")
+  
   youtube = get_authenticated_service(args)
 
   return {'args': args, 'api': youtube}

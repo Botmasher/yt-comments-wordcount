@@ -1,12 +1,12 @@
 #!/usr/bin/python
 from apiclient.discovery import build_from_document
 from apiclient.errors import HttpError
-from ytauth import yt_authorize
+from ytauth import yt_authorize_one_channel
 
-# TODO: compare captions across all videos
-# Look for transcriptions being held "in review"
+# NOTE: First use case: compare captions across all videos
+# and look for transcriptions being held "in review".
 # (The transcriptions page on yt studio ui has translations
-# for both title/desc and the captions alongside each other)
+# for both title/desc and the captions alongside each other.)
 
 # - fetch all videos (? API Search: list)
 # - create dict of video ids to video titles, captions
@@ -22,25 +22,19 @@ from ytauth import yt_authorize
 # - pop ids from dict where languages list is empty
 # - option to download caption track (API Captions: download)
 
-def list_video_draft_caption_languages(youtube, video_id=""):
-  """List languages with draft captions in review for one video"""
-  # fetch transcriptions metadata
+def list_video_captions_data(youtube=None, video_id=""):
+  """List data for each caption on one video"""
+  # fetch transcriptions data
   captions_data = youtube.captions().list(
     part = "snippet",
     videoId = video_id
   ).execute()
-  # record any draft captions
-  drafts = list(filter(
-    lambda caption: caption['snippet']['isDraft'],
-    captions_data['items']
-  ))
-  # create and return a list of draft caption languages
-  draft_languages = [draft['language'] for draft in drafts]
-  return draft_languages
+  # create a list of video captions data snippets
+  return [snippet['snippet'] for snippet in captions_data['items']]
 
-def list_channel_draft_caption_languages(youtube, channel="", max_results=100):
-  """Search channel videos for draft captions and return a list of data with
-  video ids, titles and languages with captions in review."""
+def list_channel_captions_data(youtube=None, channel="", max_results=100):
+  """Search channel videos for captions and return a list of dicts with
+  video ids, titles and languages with captions."""
 
   # fetch data for all channel videos up to max results
   videos_data = youtube.search().list(
@@ -62,19 +56,18 @@ def list_channel_draft_caption_languages(youtube, channel="", max_results=100):
   ))
 
   # search video ids for draft captions
-  draft_captions_per_video = {}
+  captions_data_per_video = {}
   for video_id, video_title in video_ids_titles:
-    draft_languages = list_video_draft_caption_languages(youtube, video_id)
-    # store draft languages in video captions dict
-    if draft_languages:
-      draft_captions_per_video[video_id] = {
-        'id': video_id,
-        'title': video_title,
-        'drafts': draft_languages
-      }
+    captions_data = list_video_captions_data(youtube, video_id)
+    # store languages in video captions dict
+    captions_data_per_video[video_id] = {
+      'id': video_id,
+      'title': video_title,
+      'captions': captions_data
+    }
     
-  # send back any found drafts in review
-  return draft_captions_per_video
+  # send back found caption languages
+  return captions_data_per_video
   
 # NOTE: example caption data for one video
 # - verify that isDraft is the relevant setting
@@ -184,3 +177,21 @@ if __name__ == "__main__":
     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
   else:
     print("Finished fetching captions.")
+
+# Call externally through command line
+def get_caption_languages(max_results):
+	yt = yt_authorize_one_channel()
+	api = yt['api']
+	channel_id = yt['args'].channelid if yt['args'].channelid else yt['args'].c
+	try:
+		draft_captions = list_channel_captions_data(
+      youtube = api,
+      channel = channel_id,
+      max_results = max_results
+    )
+		return draft_captions
+	except HttpError as e:
+		print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+	else:
+		print("Finished fetching channel draft captions.")
+
