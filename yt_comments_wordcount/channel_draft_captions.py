@@ -4,11 +4,10 @@ from fetch_captions_oauth import get_caption_languages
 
 # TODO: split this and fetch_captions api calls into new project
 
-def print_channel_draft_captions():
+def print_channel_draft_captions(youtube, channel, max_results=50):
     """Find and print channel language captions that have drafts in review"""
     # fetch captions snippets for all videos
-    max_results = 200
-    captions_data = get_caption_languages(max_results)
+    captions_data = get_caption_languages(youtube, channel, max_results)
 
     # collect video titles and lists of draft caption languages 
     draft_captions = {

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from apiclient.discovery import build_from_document
 from apiclient.errors import HttpError
-from ytauth import yt_authorize_one_channel
+#from ytauth import yt_authorize_one_channel
 
 # NOTE: First use case: compare captions across all videos
 # and look for transcriptions being held "in review".
@@ -163,30 +163,12 @@ def write_file(data):
         file.write(data)
     return
 
-if __name__ == "__main__":
-  yt = yt_authorize()
-  api = yt['api']
-  video_id = yt['args'].videoid
-
-  try:
-    caps_id = get_captions(api, video_id)
-    caps = download_captions(api, caps_id).decode("utf-8")
-    write_file(caps)
-
-  except HttpError as e:
-    print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
-  else:
-    print("Finished fetching captions.")
-
-# Call externally through command line
-def get_caption_languages(max_results):
-	yt = yt_authorize_one_channel()
-	api = yt['api']
-	channel_id = yt['args'].channelid if yt['args'].channelid else yt['args'].c
+# TODO: update to newest ytauth and app flow
+def get_caption_languages(youtube, channel, max_results):
 	try:
 		draft_captions = list_channel_captions_data(
-      youtube = api,
-      channel = channel_id,
+      youtube = youtube,
+      channel = channel,
       max_results = max_results
     )
 		return draft_captions

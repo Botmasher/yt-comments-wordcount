@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from apiclient.errors import HttpError
-from ytauth import yt_authorize_one_video
+#from ytauth import yt_authorize_one_video
 
 # Call the API's commentThreads.list method to list the existing comment threads.
 def get_comment_threads(youtube=None, video_id=None, max_results=20):
@@ -49,6 +49,7 @@ def get_channel(youtube=None, channel_id=None):
 
 	return results['items'][0]['snippet']
 
+# TODO: update to use current oauth and app flow
 # Call externally through command line and pass a --videoid
 def get_comments_text(max_results):
 	yt = yt_authorize_one_video()
